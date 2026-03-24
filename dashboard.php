@@ -7,16 +7,16 @@
         <!-- timer -->
         <div class="timer">
             <div class="timer__time">
-                <p>00:00</p>
+                <p id="time-display">00:00</p>
             </div>
             <div class="timer__types">
-                <button>Work</button>
-                <button>Break</button>
-                <button>Long Break</button>
+                <button id="work-btn">Work</button>
+                <button id="break-btn">Break</button>
+                <button id="longbreak-btn">Long Break</button>
             </div>
             <div class="timer__buttons">
-                <button>Start/Pause</button>
-                <button>Skip</button>
+                <button id="startpause-btn">Start/Pause</button>
+                <button id="skip-btn">Skip</button>
             </div>
         </div>
 
@@ -64,5 +64,7 @@
                 echo "</div>";
             }
         ?>
+        <script src="timer.js"></script>
+
     </body>
 </html>
