@@ -7,9 +7,36 @@ const startpauseBtn = document.getElementById("startpause-btn");
 const skipBtn = document.getElementById("skip-btn");
 
 // timer states; to be changed later
-let timerDuration = 25 * 60;
+let timerDuration = 0;
 let timerInterval = null;
 let isRunning = false;
+
+// timer state and changing it
+const STATES = {
+  WORK: "work",
+  BREAK: "break",
+  LONG_BREAK: "long-break"
+};
+
+workBtn.addEventListener("click", () => {
+    currentState = STATES.WORK;
+    timerDuration = 25 * 60;
+    updateDisplay();
+});
+
+breakBtn.addEventListener("click", () => {
+    currentState = STATES.BREAK;
+    timerDuration = 5 * 60;
+    updateDisplay();
+});
+
+longbreakBtn.addEventListener("click", () => {
+    currentState = STATES.LONG_BREAK;
+    timerDuration = 15 * 60;
+    updateDisplay();
+});
+
+
 
 // function to format time
 function formatTime(seconds) {
@@ -18,12 +45,11 @@ function formatTime(seconds) {
     return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-console.log(formatTime(60))
-
 // button actions
 startpauseBtn.addEventListener("click", () => {
-    if (isRunning) {
+    if (isRunning) { // checks for a reclick cuz if u reclick it again it's gonna be true
         isRunning = false;
+        clearInterval(timerInterval);
     } else {
         isRunning = true;
         timerInterval = setInterval(() => {
@@ -31,9 +57,9 @@ startpauseBtn.addEventListener("click", () => {
                 --timerDuration;
                 updateDisplay(timerDuration);
             } else {
+                clearInterval(timerInterval);
                 isRunning = false;
-                timerDuration = 0;
-                updateDisplay(timerDuration);
+                
             }
             
         }, 1000);

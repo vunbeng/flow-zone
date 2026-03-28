@@ -1,70 +1,110 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" href="css/styles.css">
-    </head>
-    <body>
-        <!-- timer -->
-        <div class="timer">
-            <div class="timer__time">
-                <p id="time-display">00:00</p>
-            </div>
-            <div class="timer__types">
-                <button id="work-btn">Work</button>
-                <button id="break-btn">Break</button>
-                <button id="longbreak-btn">Long Break</button>
-            </div>
-            <div class="timer__buttons">
-                <button id="startpause-btn">Start/Pause</button>
-                <button id="skip-btn">Skip</button>
-            </div>
-        </div>
+<head>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
 
-        <?php echo "logged in as bunveng";?>
+<!-- TIMER -->
+<div class="timer">
+    <p id="time-display">25:00</p>
 
-        <!-- tasks list -->
-        <div class="task">
-            <form action="addtask.php" method="post">
-                <input name="task-name" type="text" placeholder="Task name...">
-                <div class="task-card__estimated-sessions">
-                    <label for="sessions-expected">Estimated Sessions</label>
-                    <input name="sessions-expected" type="number"  placeholder="1">
-                </div>
+    <div>
+        <button id="work-btn">Work</button>
+        <button id="break-btn">Break</button>
+        <button id="longbreak-btn">Long Break</button>
+    </div>
 
-                <textarea name="details" type="details" placeholder="Description..."></textarea>
-                <button type="submit">Add task</button>
-            </form>
-            
-        </div>
-        <?php 
-            require_once "includes/dbh.inc.php";
+    <div>
+        <button id="startpause-btn">Start/Pause</button>
+        <button id="skip-btn">Skip</button>
+    </div>
+</div>
 
-            $query = "SELECT * FROM tasks;";
+<p>Logged in as bunveng</p>
 
-            $stmt = $pdo->prepare($query);
-            $stmt->execute();
+<!-- ADD TASK -->
+<div class="task">
+    <h3>Add Task</h3>
+    <form action="tasks.php" method="post">
+        <input type="hidden" name="action" value="add">
 
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        <input name="task-name" type="text" placeholder="Task name..." required>
 
-            foreach ($result as $row) {
-                
-                echo "<div class='task'>";
+        <input name="sessions-expected" type="number" placeholder="Sessions" min="1">
 
-                echo "<div class='task__task-name'>";
-                echo "<p>" . $row["name"] . "</p>";
-                echo "</div>";
+        <textarea name="details" placeholder="Description..."></textarea>
 
-                echo "<div class='task__sessions-needed'>";
-                echo "<p>Sessions</>";
-                echo "<p >" . $row["total_sessions"] . " / " . $row["sessions_needed"] . "</p>";
-                echo "</div>";
+        <button type="submit">Add</button>
+    </form>
+</div>
 
-                echo "<button>Done?</button>";
-                
-                echo "</div>";
-            }
-        ?>
-        <script src="timer.js"></script>
+<?php
+require_once "includes/dbh.inc.php";
 
-    </body>
+$stmt = $pdo->query("SELECT * FROM tasks");
+
+foreach ($stmt as $row):
+    $taskId = $row["id"];
+?>
+
+<!-- VIEW MODE -->
+<div id="view-<?= $taskId ?>" class="task">
+    <p><strong><?= htmlspecialchars($row["name"]) ?></strong></p>
+
+    <p>
+        <?= htmlspecialchars($row["total_sessions"]) ?> /
+        <?= htmlspecialchars($row["sessions_needed"]) ?> sessions
+    </p>
+
+    <p>
+        <?= htmlspecialchars($row["description"])?>
+    </p>
+
+    <button onclick="">Done</button>
+    <button onclick="toggleEdit(<?= $taskId ?>)">Edit</button>
+</div>
+
+<!-- EDIT MODE -->
+<div id="edit-<?= $taskId ?>" class="task" style="display:none;">
+    <form action="tasks.php" method="post">
+        <input type="hidden" name="action" value="update">
+        <input name="task-name" type="text"
+            value="<?= htmlspecialchars($row["name"]) ?>" required>
+
+        <input name="sessions-expected" type="number"
+            value="<?= htmlspecialchars($row["sessions_needed"]) ?>">
+
+        <textarea name="details"><?= htmlspecialchars($row["description"] ?? "") ?></textarea>
+
+        <input type="hidden" name="id" value="<?= $taskId ?>">
+
+        <button type="submit">Save</button>
+        <button type="button" onclick="toggleEdit(<?= $taskId ?>)">Cancel</button>
+    </form>
+    <form action="tasks.php" method="post">
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" name="id" value="<?= $taskId?>">
+        <button type="submit">Delete</button>
+    </form>
+</div>
+
+<?php endforeach; ?>
+
+<script>
+
+function toggleEdit(id) {
+    const view = document.getElementById("view-" + id);
+    const edit = document.getElementById("edit-" + id);
+
+    const isEditing = edit.style.display === "block";
+
+    view.style.display = isEditing ? "block" : "none";
+    edit.style.display = isEditing ? "none" : "block";
+}
+</script>
+
+<script src="timer.js"></script>
+
+</body>
 </html>
