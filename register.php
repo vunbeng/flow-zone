@@ -8,7 +8,7 @@
         <form action="./includes/formhandler.inc.php" method="post">
             <input type="text" name="username" placeholder="Username">
             <input type="text" name="email" placeholder="E-mail">
-            <input type="text" name="pwd" placeholder="Password">
+            <input type="password" name="pwd" placeholder="Password">
             <button type="submit">Sign Up</button>
         </form>
     </body>
