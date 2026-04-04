@@ -21,19 +21,21 @@
     </div>
 </div>
 
-<p>Logged in as bunveng</p>
+<!-- bunveng, alitaofwater -->
+<?php $username = "alitaofwater"?>
+<input type="hidden" form="addForm" name="username" value="<?= $username?>">
 
 <!-- ADD TASK -->
 <div class="task">
     <h3>Add Task</h3>
-    <form action="tasks.php" method="post">
+    <form id="addForm" action="tasks.php" method="post">
         <input type="hidden" name="action" value="add">
 
         <input name="task-name" type="text" placeholder="Task name..." required>
 
         <input name="sessions-expected" type="number" placeholder="Sessions" min="1">
 
-        <textarea name="details" placeholder="Description..."></textarea>
+        <textarea name="detail" placeholder="Description..."></textarea>
 
         <button type="submit">Add</button>
     </form>
@@ -42,7 +44,20 @@
 <?php
 require_once "includes/dbh.inc.php";
 
-$stmt = $pdo->query("SELECT * FROM tasks");
+// find user_id with username
+$query = "SELECT id FROM users WHERE username = :username;";
+$stmt = $pdo->prepare($query);
+$stmt->bindParam(":username", $username);
+
+$stmt->execute();
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$userId = $user["id"];
+
+$query = "SELECT * FROM tasks WHERE user_id = :userId;";
+$stmt = $pdo->prepare($query);
+$stmt->bindParam(":userId", $userId);
+$stmt->execute();
 
 foreach ($stmt as $row):
     $taskId = $row["id"];

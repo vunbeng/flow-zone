@@ -2,6 +2,7 @@
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $action = $_POST["action"];
+    $username = $_POST["username"];
 
     try {
         // connects to database object and executes query to insert data
@@ -12,13 +13,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $taskName = $_POST["task-name"];
             $sessionsNeeded = $_POST["sessions-expected"];
             $id = $_POST["id"];
+            $description = $_POST["detail"];
+
+            // find user_id with username
+            $query = "SELECT id FROM users WHERE username = :username;";
+            $stmt = $pdo->prepare($query);
+            $stmt->bindParam(":username", $username);
+
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $userId = $user["id"];
+            
 
             if (empty($id)) {
-                $query = "INSERT INTO tasks (name, user_id, sessions_needed) VALUES (:taskname, 1, :sessions_needed);";
+                $query = "INSERT INTO tasks (name, user_id, sessions_needed, description) VALUES (:taskname, :user_id, :sessions_needed, :description);";
 
                 $stmt = $pdo->prepare($query);
                 $stmt->bindValue(":taskname", $taskName);
                 $stmt->bindValue(":sessions_needed", $sessionsNeeded);
+                $stmt->bindValue(":user_id", $userId);
+                $stmt->bindValue(":description", $description);
 
 
                 $stmt->execute();
