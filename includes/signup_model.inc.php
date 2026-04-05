@@ -1,10 +1,5 @@
 <?php
 
-// no same username
-// unregistered email
-// valid email
-// ID more than 8 characters
-
 declare(strict_types=1);
 
 // gets the username from the database
@@ -20,6 +15,8 @@ function get_username(object $pdo, string $username) {
     return $row;
 };
 
+// gets the email
+// returns the associative array if found; returns false if not
 function get_email(object $pdo, string $email) {
     $query = "SELECT email FROM users WHERE email = :email;";
 

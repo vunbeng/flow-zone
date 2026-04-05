@@ -5,10 +5,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pwd = $_POST["pwd"];
     $email = $_POST["email"];
 
-    $option = [
-        'cost' => 12
-    ];
- 
     try {
         require_once 'dbh.inc.php';
         require_once 'signup_model.inc.php';
@@ -39,10 +35,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errors['registered_email'] = 'Email is already registered. Use a different one!';
         }
 
+        require_once 'config_session.inc.php';
+
         // error handling using validation rules
         if ($errors) {
             // stores the errors to be called later
-            $_SESSION['errors_signup'] = $errors;
+            $_SESSION['signup_errors'] = $errors;
 
             // stores the filled inputs for later if it's valid
             // better UX for users
@@ -53,8 +51,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['signup_data'] = $signupData;
 
             header('Location: ../register.php'); // goes back to the signup page
+            
+
             die();
         }
+
+        echo "Hello";
 
 
 
