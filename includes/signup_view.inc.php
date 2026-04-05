@@ -13,5 +13,7 @@ function show_errors() {
         }
 
         unset($_SESSION["signup_errors"]);
+    } else if (isset($_GET["signup"]) && $_GET["signup"] == "success") {
+        echo "<p> Signup success! </p>";
     }
 };

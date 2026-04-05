@@ -56,9 +56,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             die();
         }
 
-        echo "Hello";
+        // password hashing
+        $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT, [''=> 12]);
 
+        create_user($pdo, $username, $hashedPwd, $email);
 
+        header("Location: ../register.php?signup=success");
+
+        $pdo = null;
+        $stmt = null;
+
+        die();
 
     } catch (PDOException $e) {
         die("Query failed: " . $e->getMessage());
